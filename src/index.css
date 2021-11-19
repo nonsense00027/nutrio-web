@@ -25,6 +25,7 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  /* background-color: #fcfcfc !important; */
 }
 
 code {
@@ -40,7 +41,7 @@ code {
 .ant-menu-vertical-left .ant-menu-item::after,
 .ant-menu-vertical-right .ant-menu-item::after,
 .ant-menu-inline .ant-menu-item::after {
-  border-right: 3px solid #73db7f !important;
+  border-right: 3px solid #e6e6e6 !important;
 }
 
 .ant-menu:not(.ant-menu-horizontal) .ant-menu-item-selected {
@@ -60,3 +61,15 @@ code {
 .ant-input[disabled] {
   color: #000 !important;
 }
+
+.ant-menu-light .ant-menu-item:hover,
+.ant-menu-light .ant-menu-item-active,
+.ant-menu-light .ant-menu:not(.ant-menu-inline) .ant-menu-submenu-open,
+.ant-menu-light .ant-menu-submenu-active,
+.ant-menu-light .ant-menu-submenu-title:hover {
+  color: #3bc44b !important;
+}
+
+/* thead > tr > th {
+  background-color: #f1f1f1 !important;
+} */

@@ -12,6 +12,8 @@ import {
   collection,
   onSnapshot,
   query,
+  serverTimestamp,
+  orderBy,
 } from "firebase/firestore";
 import {
   getAuth,
@@ -48,7 +50,9 @@ export {
   deleteDoc,
   collection,
   onSnapshot,
+  serverTimestamp,
   query,
+  orderBy,
   auth,
   onAuthStateChanged,
   signInWithEmailAndPassword,

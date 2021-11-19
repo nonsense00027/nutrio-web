@@ -160,13 +160,15 @@ function PatientsPage() {
     //   });
   };
   return (
-    <div className="py-10" style={{ paddingLeft: 276, paddingRight: 20 }}>
+    <div
+      className="py-10 min-h-screen"
+      style={{ paddingLeft: 276, paddingRight: 20 }}
+    >
       <Sidebar />
       <div>
         <div className="w-96 mb-4 float-right">
           {/* <Button onClick={sendMessage}>Send message</Button> */}
           <Search
-            size="large"
             placeholder="Search patient"
             onSearch={onSearch}
             enterButton

@@ -2,8 +2,9 @@ import React, { useState } from "react";
 import { Input } from "antd";
 import { Row, Col, Button } from "antd";
 import { EditFilled, CheckOutlined, CloseOutlined } from "@ant-design/icons";
+import { db, doc, setDoc } from "../../shared/configs/firebase";
 
-function ObjectiveData({ patient, patientId }) {
+function ObjectiveData({ patient, patientId, isModal, handleNext }) {
   const [height, setHeight] = useState(patient.height || "");
   const [weight, setWeight] = useState(patient.weight || "");
   const [dbw, setDbw] = useState(patient.dbw || "");
@@ -11,7 +12,7 @@ function ObjectiveData({ patient, patientId }) {
   const [bmiCategory, setBmiCategory] = useState(patient.bmiCategory || "");
   const [others, setOthers] = useState(patient.others || "");
   const [medication, setMedication] = useState(patient.medication || "");
-  const [editing, setEditing] = useState(false);
+  const [editing, setEditing] = useState(isModal);
 
   const cancelEditing = () => {
     setHeight(patient.height || "");
@@ -24,31 +25,50 @@ function ObjectiveData({ patient, patientId }) {
     setEditing(false);
   };
 
+  const updateInfo = () => {
+    setDoc(
+      doc(db, "profile", patientId),
+      { height, weight, dbw, bmi, bmiCategory, others, medication },
+      { merge: true }
+    ).then((res) => {
+      console.log("success editing");
+      setEditing(false);
+    });
+  };
+
+  const next = () => {
+    handleNext({ height, weight, dbw, bmi, bmiCategory, others, medication });
+  };
+
   return (
     <section>
       <div className="flex items-center justify-between">
         {/* <h1 className="font-bold text-lg mb-2">Objective Data</h1> */}
         <div></div>
-        {editing ? (
-          <div className="space-x-1">
-            <Button
-              type="ghost"
-              icon={<CloseOutlined />}
-              onClick={() => cancelEditing()}
-            ></Button>
-            <Button
-              type="primary"
-              icon={<CheckOutlined />}
-              onClick={() => setEditing((prevEditing) => !prevEditing)}
-            ></Button>
-          </div>
-        ) : (
+        {!isModal && (
           <div>
-            <Button
-              type="primary"
-              icon={<EditFilled />}
-              onClick={() => setEditing((prevEditing) => !prevEditing)}
-            ></Button>
+            {editing ? (
+              <div className="space-x-1">
+                <Button
+                  type="ghost"
+                  icon={<CloseOutlined />}
+                  onClick={() => cancelEditing()}
+                ></Button>
+                <Button
+                  type="primary"
+                  icon={<CheckOutlined />}
+                  onClick={() => updateInfo()}
+                ></Button>
+              </div>
+            ) : (
+              <div>
+                <Button
+                  type="primary"
+                  icon={<EditFilled />}
+                  onClick={() => setEditing((prevEditing) => !prevEditing)}
+                ></Button>
+              </div>
+            )}
           </div>
         )}
       </div>
@@ -118,6 +138,13 @@ function ObjectiveData({ patient, patientId }) {
             />
           </Col>
         </Row>
+        {isModal && (
+          <div className="py-4 float-right">
+            <Button type="primary" onClick={() => next()}>
+              Next
+            </Button>
+          </div>
+        )}
       </div>
     </section>
   );

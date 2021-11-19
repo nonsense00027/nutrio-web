@@ -1,5 +1,5 @@
 import React from "react";
-import { Table, Tag, Space, Input, Button, Tooltip } from "antd";
+import { Table, Tag, Space, Input, Button, Tooltip, Popconfirm } from "antd";
 import Sidebar from "../../components/Sidebar";
 import {
   AudioOutlined,
@@ -15,60 +15,6 @@ import { useAuthContext } from "../../contexts/AuthContext";
 import { db, doc, setDoc } from "../../shared/configs/firebase";
 
 const { Search } = Input;
-
-const columns = [
-  {
-    title: "Name",
-    dataIndex: "name",
-    key: "name",
-  },
-  {
-    title: "Age",
-    dataIndex: "age",
-    key: "age",
-  },
-  {
-    title: "Address",
-    dataIndex: "address",
-    key: "address",
-  },
-  {
-    title: "Action",
-    key: "action",
-    render: (text, record) => {
-      console.log("text ", text.id);
-      console.log("record ", record.id);
-      return (
-        <Space size="middle">
-          <Tooltip title="Accept" overlayInnerStyle={{ fontSize: 12 }}>
-            <Button
-              type="primary"
-              icon={<CheckOutlined />}
-              onClick={() => {
-                const docRef = doc(db, "profile", record.id);
-                setDoc(docRef, { pending: false }, { merge: true });
-              }}
-            />
-          </Tooltip>
-          <Tooltip title="Remove" overlayInnerStyle={{ fontSize: 12 }}>
-            <Button
-              type="primary"
-              danger
-              icon={<DeleteFilled />}
-              onClick={() =>
-                window.open(
-                  // `${window.location.href}/${row.id}`,
-                  `/patients/${text.id}`,
-                  "_blank"
-                )
-              }
-            />
-          </Tooltip>
-        </Space>
-      );
-    },
-  },
-];
 
 const data = [
   {
@@ -100,6 +46,71 @@ function PendingPage() {
   const { patients, loading } = usePatientsContext();
 
   const { user } = useAuthContext();
+
+  const columns = [
+    {
+      title: "Name",
+      dataIndex: "name",
+      key: "name",
+    },
+    {
+      title: "Age",
+      dataIndex: "age",
+      key: "age",
+    },
+    {
+      title: "Address",
+      dataIndex: "address",
+      key: "address",
+    },
+    {
+      title: "Action",
+      key: "action",
+      render: (text, record) => {
+        console.log("text ", text.id);
+        console.log("record ", record.id);
+        return (
+          <Space size="middle">
+            <Popconfirm
+              title="Are you sure to accept this patient?"
+              onConfirm={() => {
+                const docRef = doc(db, "profile", record.id);
+                setDoc(docRef, { pending: false }, { merge: true });
+              }}
+              onCancel={() => console.log("cancel")}
+              okText="Yes"
+              cancelText="No"
+            >
+              <Tooltip title="Accept" overlayInnerStyle={{ fontSize: 12 }}>
+                <Button
+                  type="primary"
+                  icon={<CheckOutlined />}
+                  // onClick={() => {
+                  //   const docRef = doc(db, "profile", record.id);
+                  //   setDoc(docRef, { pending: false }, { merge: true });
+                  // }}
+                />
+              </Tooltip>
+            </Popconfirm>
+            <Tooltip title="Remove" overlayInnerStyle={{ fontSize: 12 }}>
+              <Button
+                type="primary"
+                danger
+                icon={<DeleteFilled />}
+                onClick={() =>
+                  window.open(
+                    // `${window.location.href}/${row.id}`,
+                    `/patients/${text.id}`,
+                    "_blank"
+                  )
+                }
+              />
+            </Tooltip>
+          </Space>
+        );
+      },
+    },
+  ];
 
   const getPending = () => {
     return patients.filter(
