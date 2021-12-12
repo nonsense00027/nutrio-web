@@ -5,7 +5,6 @@ import moment from "moment";
 import { db, doc, setDoc } from "../../shared/configs/firebase";
 
 function Profile({ patient, patientId }) {
-  console.log("patient is: ", patient);
   const [name, setName] = useState(patient.name || "");
   const [address, setAddress] = useState(patient.address || "");
   const [age, setAge] = useState(patient.age || "");
@@ -19,35 +18,6 @@ function Profile({ patient, patientId }) {
   );
   const [dietOrder, setDietOrder] = useState(patient.dietOrder || "");
   const [editing, setEditing] = useState(false);
-
-  useEffect(() => {
-    const {
-      name,
-      address,
-      age,
-      occupation,
-      religion,
-      birthdate,
-      admissionDate,
-      physician,
-      medicalDiagnosis,
-      dietOrder,
-    } = patient;
-
-    // if (patient) {
-    //   setName(name);
-    //   setAddress(address);
-    //   setAge(age);
-    //   setOccupation(occupation);
-    //   setReligion(religion);
-    //   birthdate && setBirthdate(moment(birthdate));
-    //   admissionDate && setAdmissionDate(moment(admissionDate));
-    //   physician && setPhysician(physician);
-    //   medicalDiagnosis && setMedicalDiagnosis(medicalDiagnosis);
-    //   dietOrder && setDietOrder(dietOrder);
-    // }
-  }, [patient]);
-  console.log("medical diagnosis: ", medicalDiagnosis);
 
   const updateInfo = () => {
     setDoc(

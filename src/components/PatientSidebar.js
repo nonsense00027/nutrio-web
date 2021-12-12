@@ -1,31 +1,26 @@
 import React, { useEffect, useState } from "react";
 import { Menu, Avatar, Tooltip } from "antd";
 import {
-  AppstoreOutlined,
-  MailOutlined,
-  SettingOutlined,
   ProfileOutlined,
   UserSwitchOutlined,
   UserOutlined,
   LogoutOutlined,
+  PictureOutlined,
 } from "@ant-design/icons";
 import { useLocation } from "react-router-dom";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 import { useAuthContext } from "../contexts/AuthContext";
-
-const { SubMenu } = Menu;
+import logo from "../assets/img/logo.svg";
 
 function PatientSidebar() {
   const location = useLocation();
   const history = useHistory();
-  const { user } = useAuthContext();
+  const { user, logout } = useAuthContext();
   const [patient, setPatient] = useState(null);
   useEffect(() => {
     setPatient(location.pathname.split("/")[2]);
   }, [location]);
-  const handleClick = (e) => {
-    console.log("click ", e);
-  };
+  const handleClick = (e) => {};
   return (
     <Menu
       onClick={handleClick}
@@ -43,6 +38,7 @@ function PatientSidebar() {
       //   defaultOpenKeys={["sub1"]}
       mode="inline"
     >
+      <img src={logo} alt="" className="h-36 object-contain mx-auto my-4" />
       <Menu.Item
         key="patients"
         icon={<ProfileOutlined />}
@@ -56,6 +52,13 @@ function PatientSidebar() {
         onClick={() => history.push(`/message/${patient}`)}
       >
         Message
+      </Menu.Item>
+      <Menu.Item
+        key="media"
+        icon={<PictureOutlined />}
+        onClick={() => history.push(`/media/${patient}`)}
+      >
+        Media
       </Menu.Item>
 
       {/* <SubMenu key="sub4" icon={<SettingOutlined />} title="Navigation Three">
@@ -89,7 +92,10 @@ function PatientSidebar() {
         </div>
         <div>
           <Tooltip title="Signout" overlayInnerStyle={{ fontSize: 11 }}>
-            <LogoutOutlined className="text-lg cursor-pointer" />
+            <LogoutOutlined
+              className="text-lg cursor-pointer"
+              onClick={logout}
+            />
           </Tooltip>
         </div>
       </div>

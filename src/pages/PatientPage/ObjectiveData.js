@@ -1,8 +1,11 @@
 import React, { useState } from "react";
-import { Input } from "antd";
+import { Input, Select } from "antd";
 import { Row, Col, Button } from "antd";
 import { EditFilled, CheckOutlined, CloseOutlined } from "@ant-design/icons";
 import { db, doc, setDoc } from "../../shared/configs/firebase";
+import { lifestyleCategory } from "../../shared/data/constants";
+
+const { Option } = Select;
 
 function ObjectiveData({ patient, patientId, isModal, handleNext }) {
   const [height, setHeight] = useState(patient.height || "");
@@ -10,9 +13,43 @@ function ObjectiveData({ patient, patientId, isModal, handleNext }) {
   const [dbw, setDbw] = useState(patient.dbw || "");
   const [bmi, setBmi] = useState(patient.bmi || "");
   const [bmiCategory, setBmiCategory] = useState(patient.bmiCategory || "");
+  const [lifestyle, setLifestyle] = useState(patient.lifestyle || "");
   const [others, setOthers] = useState(patient.others || "");
   const [medication, setMedication] = useState(patient.medication || "");
   const [editing, setEditing] = useState(isModal);
+
+  const getDbw = () => {
+    if (height.length > 0) {
+      let ibw = height - 100;
+      ibw = ibw * 0.9;
+      return ibw.toFixed(2);
+    }
+    return;
+  };
+
+  const getBmi = () => {
+    const heightF = height / 100;
+    const bmi = weight / (heightF * heightF);
+    return bmi.toFixed(2);
+  };
+
+  const getCategory = () => {
+    const bmi = getBmi();
+    if (bmi < 18.5) {
+      return "Underweight";
+    } else if (bmi < 22.9) {
+      return "Normal";
+    } else if (bmi < 24.9) {
+      return "Overweight";
+    } else if (bmi >= 25) {
+      return "Obese";
+    }
+  };
+
+  const getTER = () => {
+    if (!height || !weight || !lifestyle) return;
+    return parseInt(getDbw() * lifestyle);
+  };
 
   const cancelEditing = () => {
     setHeight(patient.height || "");
@@ -28,7 +65,17 @@ function ObjectiveData({ patient, patientId, isModal, handleNext }) {
   const updateInfo = () => {
     setDoc(
       doc(db, "profile", patientId),
-      { height, weight, dbw, bmi, bmiCategory, others, medication },
+      {
+        height,
+        weight,
+        dbw: getDbw(),
+        bmi: getBmi(),
+        bmiCategory: getCategory(),
+        ter: getTER(),
+        lifestyle,
+        others,
+        medication,
+      },
       { merge: true }
     ).then((res) => {
       console.log("success editing");
@@ -37,7 +84,17 @@ function ObjectiveData({ patient, patientId, isModal, handleNext }) {
   };
 
   const next = () => {
-    handleNext({ height, weight, dbw, bmi, bmiCategory, others, medication });
+    handleNext({
+      height,
+      weight,
+      dbw: getDbw(),
+      bmi: getBmi(),
+      bmiCategory: getCategory(),
+      ter: getTER(),
+      lifestyle,
+      others,
+      medication,
+    });
   };
 
   return (
@@ -75,7 +132,7 @@ function ObjectiveData({ patient, patientId, isModal, handleNext }) {
 
       <div className="space-y-4">
         <Row gutter={10}>
-          <Col span={4}>
+          <Col span={3}>
             <h3>Height (cm):</h3>
             <Input
               disabled={!editing}
@@ -84,7 +141,7 @@ function ObjectiveData({ patient, patientId, isModal, handleNext }) {
               onChange={(e) => setHeight(e.target.value)}
             />
           </Col>
-          <Col span={4}>
+          <Col span={3}>
             <h3>Weight (kg):</h3>
             <Input
               disabled={!editing}
@@ -93,31 +150,49 @@ function ObjectiveData({ patient, patientId, isModal, handleNext }) {
               onChange={(e) => setWeight(e.target.value)}
             />
           </Col>
-          <Col span={4}>
+          <Col span={3}>
             <h3>DBW:</h3>
             <Input
               disabled={!editing}
               type="number"
-              value={dbw}
-              onChange={(e) => setDbw(e.target.value)}
+              value={getDbw()}
+              // onChange={(e) => setDbw(e.target.value)}
             />
           </Col>
-          <Col span={4}>
+          <Col span={3}>
             <h3>BMI:</h3>
             <Input
               disabled={!editing}
               type="number"
-              value={bmi}
-              onChange={(e) => setBmi(e.target.value)}
+              value={getBmi()}
+              // onChange={(e) => setBmi(e.target.value)}
             />
           </Col>
-          <Col span={8}>
+          <Col span={6}>
             <h3>BMI Category:</h3>
             <Input
               disabled={!editing}
-              value={bmiCategory}
-              onChange={(e) => setBmiCategory(e.target.value)}
+              value={getCategory()}
+              // onChange={(e) => setBmiCategory(e.target.value)}
             />
+          </Col>
+          <Col span={6}>
+            <h3>Lifestyle</h3>
+            <Select
+              defaultValue=""
+              disabled={!editing}
+              style={{ width: "100%" }}
+              value={lifestyle}
+              onChange={(value) => setLifestyle(value)}
+            >
+              <Option value="">Select category</Option>
+
+              {lifestyleCategory.map((option) => (
+                <Option key={option.value} value={option.value}>
+                  {option.label}
+                </Option>
+              ))}
+            </Select>
           </Col>
         </Row>
         <Row gutter={10}>

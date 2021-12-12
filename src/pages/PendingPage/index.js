@@ -1,46 +1,10 @@
 import React from "react";
-import { Table, Tag, Space, Input, Button, Tooltip, Popconfirm } from "antd";
+import { Table, Space, Button, Tooltip, Popconfirm } from "antd";
 import Sidebar from "../../components/Sidebar";
-import {
-  AudioOutlined,
-  ExportOutlined,
-  CheckOutlined,
-  CloseOutlined,
-  DeleteFilled,
-} from "@ant-design/icons";
+import { CheckOutlined, DeleteFilled } from "@ant-design/icons";
 import { usePatientsContext } from "../../contexts/PatientsContext";
-import { getMessaging, getToken } from "../../shared/configs/firebase";
-import axios from "axios";
 import { useAuthContext } from "../../contexts/AuthContext";
 import { db, doc, setDoc } from "../../shared/configs/firebase";
-
-const { Search } = Input;
-
-const data = [
-  {
-    key: "1",
-    name: "John Brown",
-    age: 32,
-    address: "New York No. 1 Lake Park",
-    tags: ["nice", "developer"],
-  },
-  {
-    key: "2",
-    name: "Jim Green",
-    age: 42,
-    address: "London No. 1 Lake Park",
-    tags: ["loser"],
-  },
-  {
-    key: "3",
-    name: "Joe Black",
-    age: 32,
-    address: "Sidney No. 1 Lake Park",
-    tags: ["cool", "teacher"],
-  },
-];
-
-const onSearch = (value) => console.log(value);
 
 function PendingPage() {
   const { patients, loading } = usePatientsContext();
@@ -67,8 +31,6 @@ function PendingPage() {
       title: "Action",
       key: "action",
       render: (text, record) => {
-        console.log("text ", text.id);
-        console.log("record ", record.id);
         return (
           <Space size="middle">
             <Popconfirm
@@ -114,17 +76,21 @@ function PendingPage() {
 
   const getPending = () => {
     return patients.filter(
-      (patient) => patient.pending === true && patient.dietician === user.uid
+      (patient) => patient.pending === true && patient.dietician === user.id
     );
   };
-
-  const acceptPatient = () => {};
 
   return (
     <div className="py-10" style={{ paddingLeft: 276, paddingRight: 20 }}>
       <Sidebar />
       <div>
-        <Table columns={columns} dataSource={getPending()} loading={loading} />
+        <Table
+          size="small"
+          columns={columns}
+          dataSource={getPending()}
+          loading={loading}
+          rowKey={"id"}
+        />
       </div>
     </div>
   );

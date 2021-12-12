@@ -2,11 +2,12 @@ import React, { createContext, useContext, useState, useEffect } from "react";
 import {
   auth,
   onAuthStateChanged,
-  signInWithEmailAndPassword,
-  signInWithPopup,
-  GoogleAuthProvider,
   signOut,
+  onSnapshot,
+  doc,
+  db,
 } from "../shared/configs/firebase";
+import { collectIdsAndDocs } from "../shared/utilities";
 
 export const AuthContext = createContext();
 
@@ -33,10 +34,11 @@ export const AuthProvider = ({ children }) => {
   };
   useEffect(() => {
     onAuthStateChanged(auth, (authUser) => {
-      console.log("authuser is: ", authUser);
       if (authUser != null) {
-        setUser(authUser);
-        setAuthLoading(false);
+        onSnapshot(doc(db, "dieticians", authUser.uid), (doc) => {
+          setUser({ email: authUser.email, ...collectIdsAndDocs(doc) });
+          setAuthLoading(false);
+        });
       } else {
         setUser(null);
         setAuthLoading(false);
@@ -75,15 +77,17 @@ export const AuthProvider = ({ children }) => {
   //     });
   // };
 
-  //   const logout = () => {
-  //     auth().signOut();
-  //   };
+  const logout = () => {
+    signOut(auth);
+  };
 
   return (
     <AuthContext.Provider
       value={{
         user,
         authLoading,
+        error,
+        logout,
       }}
     >
       {children}

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Input,
   Row,
@@ -14,26 +14,81 @@ import {
 import { EditFilled, CheckOutlined, CloseOutlined } from "@ant-design/icons";
 
 const { Option } = Select;
-
-const options = [
-  { label: "Vegetable A", value: "Vegetable A" },
-  { label: "Vegetable B", value: "Vegetable B" },
-  { label: "Fruits", value: "Fruits" },
-  { label: "Milk", value: "Milk" },
-  { label: "Rice", value: "Rice" },
-  { label: "Low Meat", value: "Low Meat" },
-  { label: "Medium Meat", value: "Medium Meat" },
-  { label: "High Meat", value: "High Meat" },
-  { label: "Fat", value: "Fat" },
-  { label: "Sugar", value: "Sugar" },
-];
+const vegtableVal = {
+  cho: 3,
+  chon: 1,
+  fat: null,
+  cal: 16,
+};
+const fruitVal = {
+  cho: 10,
+  chon: null,
+  fat: null,
+  cal: 40,
+};
+const milkVal = {
+  cho: 12,
+  chon: 8,
+  fat: 10,
+  cal: 170,
+};
+const riceAVal = {
+  cho: 23,
+  chon: null,
+  fat: null,
+  cal: 92,
+};
+const riceBVal = {
+  cho: 23,
+  chon: 2,
+  fat: null,
+  cal: 100,
+};
+const riceCVal = {
+  cho: 23,
+  chon: 4,
+  fat: null,
+  cal: 108,
+};
+const meatLVal = {
+  cho: null,
+  chon: 8,
+  fat: 1,
+  cal: 41,
+};
+const meatMVal = {
+  cho: null,
+  chon: 8,
+  fat: 6,
+  cal: 86,
+};
+const meatHVal = {
+  cho: null,
+  chon: 8,
+  fat: 10,
+  cal: 122,
+};
+const fatVal = {
+  cho: null,
+  chon: null,
+  fat: 5,
+  cal: 45,
+};
+const sugarVal = {
+  cho: 5,
+  chon: null,
+  fat: null,
+  cal: 20,
+};
 
 function DietaryCardix({
+  currentData,
   patient,
   patientId,
-  isModal,
+  isModal = false,
   handleNext,
   handlePrev,
+  saveData,
 }) {
   const columns = [
     {
@@ -64,7 +119,7 @@ function DietaryCardix({
           type="text"
           className="outline-none bg-transparent w-12"
           value={text}
-          onChange={(e) => handleChange(e.target.value, index, "hhm")}
+          // onChange={(e) => handleChange(e.target.value, index, "hhm")}
         />
       ),
     },
@@ -77,7 +132,7 @@ function DietaryCardix({
           type="text"
           className="outline-none bg-transparent w-12"
           value={text}
-          onChange={(e) => handleChange(e.target.value, index, "cho")}
+          // onChange={(e) => handleChange(e.target.value, index, "cho")}
         />
       ),
     },
@@ -90,7 +145,7 @@ function DietaryCardix({
           type="text"
           className="outline-none bg-transparent w-12"
           value={text}
-          onChange={(e) => handleChange(e.target.value, index, "chon")}
+          // onChange={(e) => handleChange(e.target.value, index, "chon")}
         />
       ),
     },
@@ -103,7 +158,7 @@ function DietaryCardix({
           type="text"
           className="outline-none bg-transparent w-12"
           value={text}
-          onChange={(e) => handleChange(e.target.value, index, "fat")}
+          // onChange={(e) => handleChange(e.target.value, index, "fat")}
         />
       ),
     },
@@ -116,7 +171,7 @@ function DietaryCardix({
           type="text"
           className="outline-none bg-transparent w-12"
           value={text}
-          onChange={(e) => handleChange(e.target.value, index, "cal")}
+          // onChange={(e) => handleChange(e.target.value, index, "cal")}
         />
       ),
     },
@@ -126,6 +181,7 @@ function DietaryCardix({
       key: "breakfast",
       render: (text, record, index) => (
         <input
+          disabled={!editing}
           type="text"
           className="outline-none bg-transparent w-12"
           value={text}
@@ -139,6 +195,7 @@ function DietaryCardix({
       key: "lunch",
       render: (text, record, index) => (
         <input
+          disabled={!editing}
           type="text"
           className="outline-none bg-transparent w-12"
           value={text}
@@ -152,6 +209,7 @@ function DietaryCardix({
       key: "supper",
       render: (text, record, index) => (
         <input
+          disabled={!editing}
           type="text"
           className="outline-none bg-transparent w-12"
           value={text}
@@ -165,6 +223,7 @@ function DietaryCardix({
       key: "snacksAm",
       render: (text, record, index) => (
         <input
+          disabled={!editing}
           type="text"
           className="outline-none bg-transparent w-12"
           value={text}
@@ -178,6 +237,7 @@ function DietaryCardix({
       key: "snacksPm",
       render: (text, record, index) => (
         <input
+          disabled={!editing}
           type="text"
           className="outline-none bg-transparent w-12"
           value={text}
@@ -191,6 +251,7 @@ function DietaryCardix({
       key: "snacksMn",
       render: (text, record, index) => (
         <input
+          disabled={!editing}
           type="text"
           className="outline-none bg-transparent w-12"
           value={text}
@@ -199,37 +260,105 @@ function DietaryCardix({
       ),
     },
   ];
-  const [data, setData] = useState([
-    { foodItem: "Veg. A" },
-    { foodItem: "Veg. B" },
-    { foodItem: "Fruits" },
-    { foodItem: "Milk" },
-    { foodItem: "Rice" },
-    { foodItem: "Meat (L)" },
-    { foodItem: "Meat (M)" },
-    { foodItem: "Meat (H)" },
-    { foodItem: "Fat" },
-    { foodItem: "Sugar" },
-  ]);
-  const [editing, setEditing] = useState(false);
+  const [data, setData] = useState(
+    patient.cardix || [
+      { foodItem: "Vegetable" },
+      { foodItem: "Fruits" },
+      { foodItem: "Milk" },
+      { foodItem: "Rice (L)" },
+      { foodItem: "Rice (M)" },
+      { foodItem: "Rice (H)" },
+      { foodItem: "Meat (L)" },
+      { foodItem: "Meat (M)" },
+      { foodItem: "Meat (H)" },
+      { foodItem: "Fat" },
+      { foodItem: "Sugar" },
+    ]
+  );
+  const [ter, setTer] = useState(currentData?.ter || patient?.ter || 0);
+  const [editing, setEditing] = useState(isModal);
+
+  useEffect(() => {
+    if (patient && isModal === false) {
+      setTer(patient.ter);
+      setData(patient.cardix);
+    }
+  }, [patient]);
+  const getFormula = (foodItem) => {
+    switch (foodItem) {
+      case "Vegetable":
+        return vegtableVal;
+      case "Fruits":
+        return fruitVal;
+      case "Milk":
+        return milkVal;
+      case "Rice (L)":
+        return riceAVal;
+      case "Rice (M)":
+        return riceBVal;
+      case "Rice (H)":
+        return riceCVal;
+      case "Meat (L)":
+        return meatLVal;
+      case "Meat (M)":
+        return meatMVal;
+      case "Meat (H)":
+        return meatHVal;
+      case "Fat":
+        return fatVal;
+      case "Sugar":
+        return sugarVal;
+      default:
+        return null;
+    }
+  };
+  const calculate = (type, foodItem, value) => {
+    var formula = getFormula(foodItem);
+    if (formula[type]) {
+      return formula[type] * value;
+    }
+    return "";
+  };
+
+  const calculateHhm = (foodItem, exchanges) => {
+    var result = foodItem.split(" ")[0].toLowerCase();
+
+    switch (result) {
+      case "vegetable":
+        return `${exchanges * 0.5} cup/s`;
+      case "fruits":
+        return `${exchanges * 1} slice/s`;
+      case "milk":
+        return `${exchanges * 3} tbsp`;
+      case "rice":
+        return `${exchanges * 0.5} cup/s`;
+      case "meat":
+        return `${exchanges * 1} mbs`;
+      case "fat":
+        return `${exchanges * 1} tsp`;
+      case "sugar":
+        return `${exchanges * 1} tsp`;
+      default:
+        return;
+    }
+  };
 
   const handleChange = (value, index, key) => {
-    console.log("key: ", key);
-    console.log("index: ", index);
-    console.log("value: ", value);
-    console.log("editing");
     const newData = [...data];
     newData[index][key] = value;
+    if (key === "exchanges") {
+      newData[index].cho = calculate("cho", newData[index].foodItem, value);
+      newData[index].chon = calculate("chon", newData[index].foodItem, value);
+      newData[index].fat = calculate("fat", newData[index].foodItem, value);
+      newData[index].cal = calculate("cal", newData[index].foodItem, value);
+      newData[index].hhm = calculateHhm(newData[index].foodItem, value);
+    }
     setData(newData);
   };
 
   const next = () => {
-    handleNext({
-      data,
-    });
+    saveData({ cardix: data });
   };
-
-  console.log("dietary data is: ", data);
 
   return (
     <section>
@@ -263,7 +392,25 @@ function DietaryCardix({
           </div>
         )}
       </div>
-      <div className="space-y-2">
+      <Row gutter={10}>
+        <Col>
+          <h2>Total Energy Requirement</h2>
+          <Input type="text" value={`${ter} kcal`} />
+        </Col>
+        <Col>
+          <h2>Cho</h2>
+          <Input type="text" value={`${parseInt((ter * 0.4) / 4)} gm`} />
+        </Col>
+        <Col>
+          <h2>Chon</h2>
+          <Input type="text" value={`${parseInt((ter * 0.4) / 3)} gm`} />
+        </Col>
+        <Col>
+          <h2>Fat</h2>
+          <Input type="text" value={`${parseInt((ter * 0.3) / 9)} gm`} />
+        </Col>
+      </Row>
+      <div className="space-y-2 mt-4">
         {/* <div className="w-80">
           <Select defaultValue="" style={{ width: "100%" }}>
             <Option value="">Select category</Option>

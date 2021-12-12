@@ -1,14 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
-import {
-  query,
-  db,
-  onSnapshot,
-  collection,
-  getMessaging,
-  getToken,
-} from "../shared/configs/firebase";
+import { query, db, onSnapshot, collection } from "../shared/configs/firebase";
 import { collectIdsAndDocs } from "../shared/utilities";
-import { Button } from "antd";
 export const PatientsContext = createContext();
 
 export const PatientsProvider = ({ children }) => {

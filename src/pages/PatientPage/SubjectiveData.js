@@ -1,24 +1,12 @@
 import React, { useState } from "react";
-import {
-  Input,
-  Row,
-  Col,
-  Button,
-  Checkbox,
-  Divider,
-  Menu,
-  Dropdown,
-  Select,
-} from "antd";
+import { Row, Col, Button, Checkbox } from "antd";
 import { EditFilled, CheckOutlined, CloseOutlined } from "@ant-design/icons";
+import {
+  ageCategory,
+  conditionsCategory,
+  nutritionHistoryCategory,
+} from "../../shared/data/constants";
 
-const { Option } = Select;
-
-const options = [
-  { label: "Normal/Mild", value: "Normal/Mild" },
-  { label: "Moderate", value: "Moderate" },
-  { label: "Severe", value: "Severe" },
-];
 function SubjectiveData({
   patient,
   patientId,
@@ -26,61 +14,52 @@ function SubjectiveData({
   handleNext,
   handlePrev,
 }) {
-  const [bmiNotNormal, setBmiNotNormal] = useState(
-    patient.bmiNotNormal || false
+  const [ageGroup, setAgeGroup] = useState(patient.ageGroup || "");
+  const [conditionsToNote, setConditionsToNote] = useState(
+    patient.conditionsToNote || []
   );
-  const [reducedWeight, setReducedWeight] = useState(
-    patient.reducedWeight || false
+  const [nutritionHistory, setNutritionHistory] = useState(
+    patient.nutritionHistory || []
   );
-  const [reducedDietary, setReducedDietary] = useState(
-    patient.reducedDietary || false
-  );
-  const [severlyIll, setSeverlyIll] = useState(patient.severlyIll || false);
-  const [weightLoss, setWeightLoss] = useState(patient.weightLoss || "");
-  const [foodIntake, setFoodIntake] = useState(patient.foodIntake || "");
-  const [gastroSymptom, setGastroSymptom] = useState(
-    patient.gastroSymptom || ""
-  );
-  const [functionalCapacity, setFunctionalCapacity] = useState(
-    patient.functionalCapacity || ""
-  );
-  const [metabolicRequirement, setMetabolicRequirement] = useState(
-    patient.metabolicRequirement || ""
-  );
-  const [edema, setEdema] = useState(patient.edema || "");
-  const [sgaGrade, setSgaGrade] = useState(patient.sgaGrade || "");
-  const [bodyMass, setBodyMass] = useState(patient.bodyMass || "");
-  const [albumin, setAlbumin] = useState(patient.albumin || "");
-  const [tlc, setTlc] = useState(patient.tlc || "");
   const [editing, setEditing] = useState(isModal);
 
-  const cancelEditing = () => {};
+  const handleConditionsChange = (value) => {
+    var newNote;
+    if (conditionsToNote.includes(value)) {
+      newNote = conditionsToNote.filter((condition) => condition !== value);
+    } else {
+      newNote = [...conditionsToNote, value];
+    }
+    setConditionsToNote(newNote);
+  };
+
+  const handleNutritionChange = (value) => {
+    var newNote;
+    if (nutritionHistory.includes(value)) {
+      newNote = nutritionHistory.filter((condition) => condition !== value);
+    } else {
+      newNote = [...nutritionHistory, value];
+    }
+    setNutritionHistory(newNote);
+  };
+
+  const cancelEditing = () => {
+    setEditing(false);
+  };
 
   const next = () => {
     handleNext({
-      bmiNotNormal,
-      reducedWeight,
-      reducedDietary,
-      severlyIll,
-      weightLoss,
-      foodIntake,
-      gastroSymptom,
-      functionalCapacity,
-      metabolicRequirement,
-      edema,
-      sgaGrade,
-      bodyMass,
-      albumin,
-      tlc,
+      ageGroup,
+      conditionsToNote,
+      nutritionHistory,
     });
   };
-  console.log("weight loss is: ", weightLoss);
   return (
     <section>
       <div className="flex items-center justify-between">
         {/* <h1 className="font-bold text-lg mb-2">Subjective Data</h1> */}
         <div></div>
-        {isModal === false && (
+        {!isModal && (
           <div>
             {editing ? (
               <div className="space-x-1">
@@ -107,56 +86,70 @@ function SubjectiveData({
           </div>
         )}
       </div>
-      <div className="space-y-2">
-        <Row gutter={10}>
-          <Col span={1}>
-            <Checkbox
-              checked={bmiNotNormal}
-              onChange={(e) => setBmiNotNormal(e.target.checked)}
-            />
-          </Col>
-          <Col>
-            <p>{`Is BMI <18.5 or >23; >25; >30?`}</p>
-          </Col>
-        </Row>
-        <Row gutter={10}>
-          <Col span={1}>
-            <Checkbox
-              checked={reducedWeight}
-              onChange={(e) => setReducedWeight(e.target.checked)}
-            />
-          </Col>
-          <Col>
-            <p>Has the patient reduced weight within last three (3) months?</p>
-          </Col>
-        </Row>
-        <Row gutter={10}>
-          <Col span={1}>
-            <Checkbox
-              checked={reducedDietary}
-              onChange={(e) => setReducedDietary(e.target.checked)}
-            />
-          </Col>
-          <Col>
-            <p>Did the patient reduced dietary intake in the last week?</p>
-          </Col>
-        </Row>
-        <Row gutter={10}>
-          <Col span={1}>
-            <Checkbox
-              checked={severlyIll}
-              onChange={(e) => setSeverlyIll(e.target.checked)}
-            />
-          </Col>
-          <Col>
-            <p>Is the patient severly ill? (e.g. ICU)</p>
-          </Col>
-        </Row>
-      </div>
-      <Divider />
+      <div className="flex gap-20">
+        <div>
+          <Row>
+            <Col>
+              <h1>Age group</h1>
+              {ageCategory.map((category) => (
+                <Row gutter={10} key={category.value}>
+                  <Col>
+                    <Checkbox
+                      disabled={!editing}
+                      checked={ageGroup === category.value}
+                      onChange={() => setAgeGroup(category.value)}
+                    />
+                  </Col>
+                  <Col>
+                    <p>{category.label}</p>
+                  </Col>
+                </Row>
+              ))}
+            </Col>
+          </Row>
 
-      {/* ASSESSMENT */}
-      <div className="space-y-3">
+          <h1 className="mt-2">Conditions to note</h1>
+          <Row>
+            <Col>
+              {conditionsCategory.map((condition) => (
+                <Row gutter={10} key={condition.value}>
+                  <Col>
+                    <Checkbox
+                      disabled={!editing}
+                      checked={conditionsToNote.includes(condition.value)}
+                      onChange={() => handleConditionsChange(condition.value)}
+                    />
+                  </Col>
+                  <Col>
+                    <p>{condition.label}</p>
+                  </Col>
+                </Row>
+              ))}
+            </Col>
+          </Row>
+        </div>
+
+        {/* ASSESSMENT */}
+        <div>
+          <h1>Nutrition History</h1>
+          {nutritionHistoryCategory.map((history) => (
+            <Row gutter={10} key={history.value}>
+              <Col>
+                <Checkbox
+                  disabled={!editing}
+                  checked={nutritionHistory.includes(history.value)}
+                  onChange={() => handleNutritionChange(history.value)}
+                />
+              </Col>
+              <Col>
+                <p>{history.label}</p>
+              </Col>
+            </Row>
+          ))}
+        </div>
+      </div>
+
+      {/* <div className="space-y-3">
         <Row gutter={10}>
           <Col span={4}>
             <Select
@@ -375,7 +368,15 @@ function SubjectiveData({
             </Button>
           </div>
         )}
-      </div>
+      </div> */}
+      {isModal && (
+        <div className="py-4 float-right space-x-2">
+          <Button onClick={handlePrev}>Previous</Button>
+          <Button type="primary" onClick={() => next()}>
+            Next
+          </Button>
+        </div>
+      )}
     </section>
   );
 }

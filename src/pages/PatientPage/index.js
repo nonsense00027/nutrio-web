@@ -28,12 +28,14 @@ const { Step } = Steps;
 const { Option } = Select;
 
 const getContent = (
+  currentData,
   current,
   patient,
   patientId,
   isModal,
   handleNext,
-  handlePrev
+  handlePrev,
+  saveData
 ) => {
   switch (current) {
     case 0:
@@ -68,13 +70,17 @@ const getContent = (
     case 3:
       return (
         <DietaryCardix
+          currentData={currentData}
           patient={patient}
           patientId={patientId}
           isModal={isModal}
           handleNext={handleNext}
           handlePrev={handlePrev}
+          saveData={saveData}
         />
       );
+    default:
+      return;
   }
 };
 function PatientPage() {
@@ -86,14 +92,13 @@ function PatientPage() {
   const [newData, setNewData] = useState({});
   const [selectedDate, setSelectedDate] = useState("");
 
-  console.log("patient ", patient);
   useEffect(
     () =>
       onSnapshot(doc(db, "profile", patientId), (doc) => {
         setPatient(collectIdsAndDocs(doc));
       }),
 
-    []
+    [patientId]
   );
   useEffect(
     () =>
@@ -104,13 +109,12 @@ function PatientPage() {
         ),
         (snapshot) => {
           const result = snapshot.docs.map((doc) => collectIdsAndDocs(doc));
-          console.log("result is: ", result);
           setRecords(result);
           if (result.length > 0) setSelectedDate(result[0].id);
         }
       ),
 
-    []
+    [patientId]
   );
 
   const getPatientData = () => {
@@ -118,19 +122,11 @@ function PatientPage() {
     return records.filter((record) => record.id === selectedDate)[0];
   };
 
-  console.log("records is: ", records);
-
-  const handleOk = () => {
-    setVisible(false);
-  };
-
   const handleCancel = () => {
     setVisible(false);
   };
 
-  const onCollapse = () => {
-    console.log("change");
-  };
+  const onCollapse = () => {};
 
   const handleNext = (data) => {
     setNewData({ ...newData, ...data });
@@ -141,18 +137,21 @@ function PatientPage() {
     setCurrent((prevCurrent) => prevCurrent - 1);
   };
 
-  const saveData = () => {
+  const saveData = (data) => {
     addDoc(collection(db, "profile", patientId, "records"), {
       ...newData,
+      ...data,
       timestamp: serverTimestamp(),
     }).then((res) => {
       console.log("success saving new data");
       setVisible(false);
+      setNewData({});
+      setCurrent(0);
     });
   };
 
-  console.log("new data is: ", newData);
-  console.log("getting patient data", getPatientData());
+  // console.log("SELECTED DATE: ", getPatientData());
+
   return (
     <div
       className="py-10 min-h-screen pb-10"
@@ -201,13 +200,13 @@ function PatientPage() {
                       patientId={patientId}
                     />
                   </Panel>
-                  <Panel header="Nutrition Intervention" key="3">
+                  <Panel header="Assessment and Plan" key="3">
                     <NutritionIntervention
                       patient={getPatientData()}
                       patientId={patientId}
                     />
                   </Panel>
-                  <Panel header="Dietary Cardix" key="4">
+                  <Panel header="Nutrition Intervention" key="4">
                     <DietaryCardix
                       patient={getPatientData()}
                       patientId={patientId}
@@ -273,19 +272,21 @@ function PatientPage() {
           <Steps size="small" current={current}>
             <Step title="Objective Data" />
             <Step title="Subjective Data" />
+            <Step title="Assessment and Plan" />
             <Step title="Nutrition Intervention" />
-            <Step title="Dietary Cardix" />
           </Steps>
         </div>
 
         <div className="mt-12">
           {getContent(
+            newData,
             current,
             patient,
             patientId,
             true,
             handleNext,
-            handlePrev
+            handlePrev,
+            saveData
           )}
         </div>
       </Modal>

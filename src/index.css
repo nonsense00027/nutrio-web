@@ -41,7 +41,7 @@ code {
 .ant-menu-vertical-left .ant-menu-item::after,
 .ant-menu-vertical-right .ant-menu-item::after,
 .ant-menu-inline .ant-menu-item::after {
-  border-right: 3px solid #e6e6e6 !important;
+  border-right: 3px solid #6b818c !important;
 }
 
 .ant-menu:not(.ant-menu-horizontal) .ant-menu-item-selected {
@@ -49,8 +49,8 @@ code {
 }
 
 .ant-btn-primary {
-  background: #73db7f !important;
-  border-color: #73db7f !important;
+  background: #3bc490 !important;
+  border-color: #3bc490 !important;
 }
 
 .ant-btn-dangerous.ant-btn-primary {
@@ -70,6 +70,12 @@ code {
   color: #3bc44b !important;
 }
 
-/* thead > tr > th {
-  background-color: #f1f1f1 !important;
-} */
+thead > tr > th {
+  background-color: #f7f7f7 !important;
+  /* color: #fff !important; */
+}
+
+.ant-tag {
+  display: flex !important;
+  align-items: center !important;
+}

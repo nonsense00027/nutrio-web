@@ -1,9 +1,6 @@
 import React from "react";
-import { Menu, Avatar, Image, Tooltip } from "antd";
+import { Menu, Avatar, Tooltip } from "antd";
 import {
-  AppstoreOutlined,
-  MailOutlined,
-  SettingOutlined,
   ProfileOutlined,
   UserSwitchOutlined,
   UserOutlined,
@@ -12,13 +9,20 @@ import {
 import { useLocation } from "react-router-dom";
 import { useHistory } from "react-router-dom";
 import { useAuthContext } from "../contexts/AuthContext";
-
-const { SubMenu } = Menu;
+import logo from "../assets/img/logo.svg";
+import { usePatientsContext } from "../contexts/PatientsContext";
 
 function Sidebar() {
   const location = useLocation();
   const history = useHistory();
-  const { user } = useAuthContext();
+  const { user, logout } = useAuthContext();
+  const { patients } = usePatientsContext();
+
+  const getPending = () => {
+    return patients.filter(
+      (patient) => patient.pending === true && patient.dietician === user.id
+    );
+  };
 
   const handleClick = (e) => {
     console.log("click ", e);
@@ -39,6 +43,7 @@ function Sidebar() {
       selectedKeys={[location.pathname]}
       mode="inline"
     >
+      <img src={logo} alt="" className="h-36 object-contain mx-auto my-4" />
       <Menu.Item
         key="/"
         icon={<ProfileOutlined />}
@@ -52,6 +57,13 @@ function Sidebar() {
         onClick={() => history.push("/pending")}
       >
         Pending
+        {getPending().length > 0 && (
+          <div className="float-right mr-4">
+            <span className="text-white bg-red-500 rounded-full py-1 px-2">
+              {getPending().length}
+            </span>
+          </div>
+        )}
       </Menu.Item>
 
       {/* <SubMenu key="sub4" icon={<SettingOutlined />} title="Navigation Three">
@@ -76,7 +88,7 @@ function Sidebar() {
           />
           <div className="flex flex-col flex-1">
             <h3 className="text-sm font-semibold mb-1 -mt-1 flex-grow">
-              Margarette
+              {user.firstname}
             </h3>
             <p style={{ fontSize: 10, opacity: 0.7 }}>
               {/* @{user.firstname.toLowerCase()}_{user.lastname.toLowerCase()} */}
@@ -86,7 +98,10 @@ function Sidebar() {
         </div>
         <div>
           <Tooltip title="Signout" overlayInnerStyle={{ fontSize: 11 }}>
-            <LogoutOutlined className="text-lg cursor-pointer" />
+            <LogoutOutlined
+              className="text-lg cursor-pointer"
+              onClick={logout}
+            />
           </Tooltip>
         </div>
       </div>
