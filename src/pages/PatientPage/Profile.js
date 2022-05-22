@@ -44,7 +44,7 @@ function Profile({ patient, patientId }) {
   return (
     <section className="space-y-4">
       <div className="flex items-center justify-between">
-        <h1 className="font-bold text-lg mb-2">Patient Profile</h1>
+        <h1 className="font-bold text-lg mb-2 font-primary">Patient Profile</h1>
         {editing ? (
           <div className="space-x-1">
             <Button

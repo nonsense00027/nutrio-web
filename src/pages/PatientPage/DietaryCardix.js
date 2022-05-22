@@ -429,6 +429,9 @@ function DietaryCardix({
           size="small"
           bordered
           pagination={false}
+          tableLayout="auto"
+          scroll={true}
+          className="dietary"
         />
         {isModal && (
           <div className="py-4 float-right space-x-2">

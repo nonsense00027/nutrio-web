@@ -5,6 +5,8 @@ import { CheckOutlined, DeleteFilled } from "@ant-design/icons";
 import { usePatientsContext } from "../../contexts/PatientsContext";
 import { useAuthContext } from "../../contexts/AuthContext";
 import { db, doc, setDoc } from "../../shared/configs/firebase";
+import Notification from "../../components/Notification";
+import { SearchIcon, UserCircleIcon } from "@heroicons/react/solid";
 
 function PendingPage() {
   const { patients, loading } = usePatientsContext();
@@ -81,16 +83,24 @@ function PendingPage() {
   };
 
   return (
-    <div className="py-10" style={{ paddingLeft: 276, paddingRight: 20 }}>
-      <Sidebar />
-      <div>
-        <Table
-          size="small"
-          columns={columns}
-          dataSource={getPending()}
-          loading={loading}
-          rowKey={"id"}
-        />
+    <div className="pl-32 pt-10 pr-96 bg-gray-50 min-h-screen">
+      <div className="pr-9">
+        <Sidebar />
+        <Notification />
+        <div>
+          <div className="flex items-center justify-between mb-14">
+            <h1 className="font-primary font-bold text-3xl">
+              👱‍♀️ Pending patients
+            </h1>
+          </div>
+          <Table
+            size="small"
+            columns={columns}
+            dataSource={getPending()}
+            loading={loading}
+            rowKey={"id"}
+          />
+        </div>
       </div>
     </div>
   );

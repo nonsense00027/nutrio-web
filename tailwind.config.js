@@ -5,7 +5,13 @@ module.exports = {
     extend: {
       colors: {
         primary: "#73DB7F",
-        secondary: "#3bc490",
+        secondary: {
+          DEFAULT: "#F99717",
+          dark: "#FD6F21",
+        },
+      },
+      fontFamily: {
+        primary: ["Poppins", "sans-serif"],
       },
     },
   },
@@ -13,6 +19,7 @@ module.exports = {
     extend: {
       transform: ["active"],
       scale: ["active"],
+      backgroundColor: ["active"],
     },
   },
   plugins: [],

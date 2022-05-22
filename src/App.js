@@ -9,6 +9,7 @@ import PendingPage from "./pages/PendingPage";
 import MessagePage from "./pages/MessagePage";
 import { UserContextProvider } from "./contexts/UserContext";
 import MediaPage from "./pages/MediaPage";
+import Dashboard from "./pages/HomePage";
 
 function App() {
   const { user, authLoading } = useAuthContext();
@@ -38,8 +39,12 @@ function App() {
               <Route path="/pending">
                 <PendingPage />
               </Route>
-              <Route path="/">
+              <Route path="/patients">
                 <PatientsPage />
+              </Route>
+              <Route path="/">
+                {/* <PatientsPage /> */}
+                <Dashboard />
               </Route>
             </Switch>
           </Router>

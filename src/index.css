@@ -2,6 +2,15 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer components {
+  .side-menu {
+    @apply py-1 my-6 flex items-center justify-center cursor-pointer transition-all transform duration-200 ease-out border-r border-transparent;
+  }
+  .input {
+    @apply outline-none bg-transparent border-b focus:border-secondary py-1 mt-1;
+  }
+}
+
 * {
   box-sizing: border-box;
   margin: 0;
@@ -9,6 +18,13 @@
 }
 
 p {
+  margin: 0 !important;
+}
+
+h1,
+h2,
+h3,
+h4 {
   margin: 0 !important;
 }
 
@@ -71,8 +87,9 @@ code {
 }
 
 thead > tr > th {
-  background-color: #f7f7f7 !important;
-  /* color: #fff !important; */
+  background-color: #11b981 !important;
+  color: #fff !important;
+  padding: 12px 10px !important;
 }
 
 .ant-tag {

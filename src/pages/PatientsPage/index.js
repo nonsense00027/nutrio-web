@@ -4,6 +4,12 @@ import Sidebar from "../../components/Sidebar";
 import { ExportOutlined } from "@ant-design/icons";
 import { usePatientsContext } from "../../contexts/PatientsContext";
 import { useAuthContext } from "../../contexts/AuthContext";
+import Notification from "../../components/Notification";
+import {
+  SearchCircleIcon,
+  SearchIcon,
+  UserCircleIcon,
+} from "@heroicons/react/solid";
 
 const { Search } = Input;
 
@@ -62,28 +68,34 @@ function PatientsPage() {
   };
 
   return (
-    <div
-      className="py-10 min-h-screen"
-      style={{ paddingLeft: 276, paddingRight: 20 }}
-    >
-      <Sidebar />
-      <div>
-        <div className="w-96 mb-4 float-right">
-          {/* <Button onClick={sendMessage}>Send message</Button> */}
-          <Search
-            placeholder="Search patient"
-            onSearch={onSearch}
-            // enterButton
+    <div className="pl-32 pt-10 pr-96 bg-gray-50 min-h-screen">
+      <div className="pr-9">
+        <Sidebar />
+        <Notification />
+        <div>
+          <div className="flex items-center justify-between mb-14">
+            <h1 className="font-primary font-bold text-3xl">
+              👱‍♀️ List of Patients
+            </h1>
+            <div className="w-96 bg-white flex shadow-sm rounded-sm overflow-hidden">
+              <input
+                type="text"
+                className="py-2 flex-1 focus:ring-0 outline-none px-2"
+              />
+              <div className="bg-green-500 flex items-center justify-center px-2">
+                <SearchIcon className="h-6 w-6 text-white" />
+              </div>
+            </div>
+          </div>
+
+          <Table
+            size="small"
+            columns={columns}
+            dataSource={getPatients()}
+            loading={loading}
+            rowKey={"id"}
           />
         </div>
-
-        <Table
-          size="small"
-          columns={columns}
-          dataSource={getPatients()}
-          loading={loading}
-          rowKey={"id"}
-        />
       </div>
     </div>
   );
